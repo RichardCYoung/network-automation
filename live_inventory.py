@@ -140,12 +140,21 @@ def get_juniper_inventory(device, username, password):
                 ":",
                 1,
             )[1].strip()
-
+            
         elif "Junos:" in line:
             software_version = line.split(
-                "Junos:",
-                1,
-            )[1].strip()
+            "Junos:",
+            1,
+        )[1].strip()
+
+        elif line.startswith("version "):
+            software_version = (
+            line.replace("version ", "")
+            .replace(";", "")
+            .strip()
+        )
+
+    
 
     # Parse chassis serial number
     for line in hardware_output.splitlines():
