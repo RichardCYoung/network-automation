@@ -10,3 +10,27 @@ devices:
     host: 192.168.100.230
     port: 22
     credential_group: lab-juniper
+
+  - name: juniper-switch-02
+    device_type: juniper_junos
+    host: 192.168.100.231
+    port: 22
+    credential_group: lab-juniper
+
+  - name: cisco-switch-01
+    device_type: cisco_ios
+    host: 10.100.1.101
+    port: 22
+    credential_group: lab-cisco
+
+  - name: cisco-switch-02
+    device_type: cisco_ios
+    host: 10.100.1.102
+    port: 22
+    credential_group: lab-cisco
+
+  - name: dell-switch-01
+    device_type: dell_os10
+    host: 192.168.100.232
+    port: 22
+    credential_group: lab-dell
