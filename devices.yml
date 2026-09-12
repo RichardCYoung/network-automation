@@ -1,4 +1,5 @@
 devices:
+
   - name: arista-veos-01
     device_type: arista_eos
     host: 10.100.1.105
@@ -30,7 +31,7 @@ devices:
     credential_group: lab-cisco
 
   - name: dell-switch-01
-    device_type: dell_os10
+    device_type: dell_os9
     host: 192.168.100.232
     port: 22
     credential_group: lab-dell
