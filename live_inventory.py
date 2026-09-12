@@ -41,10 +41,20 @@ def get_arista_inventory(device, username, password):
         "serial_number": version.get("serialNumber", "Unknown"),
         "software_version": version.get("version", "Unknown"),
         "architecture": version.get("architecture", "Unknown"),
-        "uptime": version.get("uptime", "Unknown"),
+        "uptime": format_uptime(version.get("uptime", 0)),
         "management_ip": device["host"],
     }
 
+def format_uptime(seconds):
+    """Convert uptime in seconds to a human-readable format."""
+
+    seconds = int(float(seconds))
+
+    days, remainder = divmod(seconds, 86400)
+    hours, remainder = divmod(remainder, 3600)
+    minutes, seconds = divmod(remainder, 60)
+
+    return f"{days}d {hours}h {minutes}m {seconds}s"
 
 def display_inventory(inventory):
     print("\nNetwork Device Inventory")
