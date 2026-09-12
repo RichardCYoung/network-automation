@@ -1,0 +1,18 @@
+devices:
+  - hostname: R1
+    vendor: Cisco
+    model: CSR1000v
+    version: 17.x
+    management_ip: 192.168.1.10
+
+  - hostname: SW1
+    vendor: Arista
+    model: vEOS
+    version: 4.34.7M
+    management_ip: 192.168.1.11
+
+  - hostname: SW2
+    vendor: Juniper
+    model: vEX
+    version: 23.x
+    management_ip: 192.168.1.12
