@@ -17,14 +17,14 @@ devices:
     port: 22
     credential_group: lab-juniper
 
-  - name: cisco-switch-01
-    device_type: cisco_ios
+  - name: cisco-nexus-01
+    device_type: cisco_nxos
     host: 10.100.1.101
     port: 22
     credential_group: lab-cisco
 
-  - name: cisco-switch-02
-    device_type: cisco_ios
+  - name: cisco-nexus-02
+    device_type: cisco_nxos
     host: 10.100.1.102
     port: 22
     credential_group: lab-cisco
