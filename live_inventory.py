@@ -10,7 +10,7 @@ INVENTORY_FILE = Path("devices.yml")
 
 
 def load_devices():
-    """Load device definitions from the YAML inventory file."""
+    """Load devices from YAML inventory."""
 
     with INVENTORY_FILE.open("r", encoding="utf-8") as file:
         inventory = yaml.safe_load(file)
@@ -19,7 +19,7 @@ def load_devices():
 
 
 def format_uptime(seconds):
-    """Convert uptime in seconds to a human-readable format."""
+    """Convert seconds to a human-readable uptime."""
 
     try:
         seconds = int(float(seconds))
@@ -33,10 +33,10 @@ def format_uptime(seconds):
     return f"{days}d {hours}h {minutes}m {seconds}s"
 
 
-def get_arista_inventory(device, username, password):
-    """Collect inventory information from an Arista EOS device."""
+def get_connection_params(device, username, password):
+    """Build Netmiko connection parameters."""
 
-    connection_params = {
+    return {
         "device_type": device["device_type"],
         "host": device["host"],
         "port": device.get("port", 22),
@@ -44,9 +44,16 @@ def get_arista_inventory(device, username, password):
         "password": password,
     }
 
-    print(
-        f"\nConnecting to {device['name']} "
-        f"({device['host']})..."
+
+def get_arista_inventory(device, username, password):
+    """Collect inventory information from Arista EOS."""
+
+    print(f"\nConnecting to {device['name']} ({device['host']})...")
+
+    connection_params = get_connection_params(
+        device,
+        username,
+        password,
     )
 
     with ConnectHandler(**connection_params) as connection:
@@ -91,19 +98,14 @@ def get_arista_inventory(device, username, password):
 
 
 def get_juniper_inventory(device, username, password):
-    """Collect inventory information from a Juniper Junos device."""
+    """Collect inventory information from Juniper Junos."""
 
-    connection_params = {
-        "device_type": device["device_type"],
-        "host": device["host"],
-        "port": device.get("port", 22),
-        "username": username,
-        "password": password,
-    }
+    print(f"\nConnecting to {device['name']} ({device['host']})...")
 
-    print(
-        f"\nConnecting to {device['name']} "
-        f"({device['host']})..."
+    connection_params = get_connection_params(
+        device,
+        username,
+        password,
     )
 
     with ConnectHandler(**connection_params) as connection:
@@ -121,11 +123,10 @@ def get_juniper_inventory(device, username, password):
 
     hostname = "Unknown"
     model = "Unknown"
-    software_version = "Unknown"
     serial_number = "Unknown"
+    software_version = "Unknown"
     uptime = "Unknown"
 
-    # Parse "show version"
     for line in version_output.splitlines():
         line = line.strip()
 
@@ -140,23 +141,24 @@ def get_juniper_inventory(device, username, password):
                 ":",
                 1,
             )[1].strip()
-            
+
         elif "Junos:" in line:
             software_version = line.split(
-            "Junos:",
-            1,
-        )[1].strip()
+                "Junos:",
+                1,
+            )[1].strip()
 
         elif line.startswith("version "):
             software_version = (
-            line.replace("version ", "")
-            .replace(";", "")
-            .strip()
-        )
+                line.replace(
+                    "version ",
+                    "",
+                    1,
+                )
+                .replace(";", "")
+                .strip()
+            )
 
-    
-
-    # Parse chassis serial number
     for line in hardware_output.splitlines():
         line = line.strip()
 
@@ -168,7 +170,6 @@ def get_juniper_inventory(device, username, password):
 
             break
 
-    # Parse Juniper uptime
     for line in uptime_output.splitlines():
         line = line.strip()
 
@@ -176,6 +177,7 @@ def get_juniper_inventory(device, username, password):
             uptime = line.replace(
                 "System booted:",
                 "",
+                1,
             ).strip()
 
             break
@@ -192,15 +194,106 @@ def get_juniper_inventory(device, username, password):
     }
 
 
+def get_cisco_inventory(device, username, password):
+    """Collect inventory information from Cisco IOS/IOS-XE."""
+
+    print(f"\nConnecting to {device['name']} ({device['host']})...")
+
+    connection_params = get_connection_params(
+        device,
+        username,
+        password,
+    )
+
+    with ConnectHandler(**connection_params) as connection:
+        version_output = connection.send_command(
+            "show version"
+        )
+
+    hostname = "Unknown"
+    model = "Unknown"
+    serial_number = "Unknown"
+    software_version = "Unknown"
+    uptime = "Unknown"
+
+    for line in version_output.splitlines():
+        line = line.strip()
+
+        if " uptime is " in line:
+            hostname, uptime = line.split(
+                " uptime is ",
+                1,
+            )
+
+            hostname = hostname.strip()
+            uptime = uptime.strip()
+
+        elif (
+            "Cisco IOS XE Software" in line
+            and "Version" in line
+        ):
+            software_version = (
+                line.split(
+                    "Version",
+                    1,
+                )[1]
+                .split(",", 1)[0]
+                .strip()
+            )
+
+        elif (
+            line.startswith("Cisco IOS Software")
+            and "Version" in line
+        ):
+            software_version = (
+                line.split(
+                    "Version",
+                    1,
+                )[1]
+                .split(",", 1)[0]
+                .strip()
+            )
+
+        elif line.startswith("Model Number"):
+            model = line.split(
+                ":",
+                1,
+            )[1].strip()
+
+        elif line.startswith("System serial number"):
+            serial_number = line.split(
+                ":",
+                1,
+            )[1].strip()
+
+        elif "Processor board ID" in line:
+            if serial_number == "Unknown":
+                serial_number = line.split(
+                    "Processor board ID",
+                    1,
+                )[1].strip()
+
+    return {
+        "hostname": hostname,
+        "vendor": "Cisco",
+        "model": model,
+        "serial_number": serial_number,
+        "software_version": software_version,
+        "architecture": "N/A",
+        "uptime": uptime,
+        "management_ip": device["host"],
+    }
+
+
 def display_inventory(inventory):
-    """Display collected network inventory."""
+    """Display collected inventory."""
 
     print("\n")
     print("Network Device Inventory")
     print("=" * 75)
 
     if not inventory:
-        print("No device inventory was collected.")
+        print("No inventory was collected.")
         return
 
     for device in inventory:
@@ -248,7 +341,7 @@ def display_inventory(inventory):
 
 
 def main():
-    """Main program."""
+    """Run network inventory collection."""
 
     devices = load_devices()
 
@@ -263,10 +356,6 @@ def main():
                 "default",
             )
 
-            #
-            # Ask for credentials only once
-            # for each credential group.
-            #
             if credential_group not in credentials:
 
                 print(
@@ -295,10 +384,6 @@ def main():
                 credential_group
             ]["password"]
 
-            #
-            # Select vendor-specific
-            # inventory collector.
-            #
             if device["device_type"] == "arista_eos":
 
                 result = get_arista_inventory(
@@ -315,11 +400,20 @@ def main():
                     password,
                 )
 
+            elif device["device_type"] == "cisco_ios":
+
+                result = get_cisco_inventory(
+                    device,
+                    username,
+                    password,
+                )
+
             else:
 
                 print(
-                    f"Unsupported device type: "
-                    f"{device['device_type']}"
+                    f"\nUnsupported device type: "
+                    f"{device['device_type']} "
+                    f"for {device['name']}"
                 )
 
                 continue
@@ -329,7 +423,7 @@ def main():
         except Exception as error:
 
             print(
-                f"\nFailed to connect to "
+                f"\nFailed to collect inventory from "
                 f"{device['name']} "
                 f"({device['host']}):"
             )
