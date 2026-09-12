@@ -3,3 +3,8 @@ devices:
     device_type: arista_eos
     host: 10.100.1.105
     port: 22
+
+ name: juniper-switch-01
+    device_type: juniper_junos
+    host: 192.168.100.230
+    port: 22
