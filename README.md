@@ -288,3 +288,86 @@ LAB-NXOS-SW-1   Eth1/2      up       access  20     Server-01
 LAB-JUNIPER-01  ge-0/0/1    up       access  10     Management
 LAB-DELL-01     Te1/49      up       trunk   10     Core-Uplink
 
+## Configuration Compliance Checker
+
+The repository also includes an early-stage multi-vendor configuration compliance framework.
+
+The goal is to automatically validate network device configurations against defined operational and security standards.
+
+Currently targeted platforms include:
+
+- Arista EOS
+- Cisco NX-OS
+- Juniper Junos
+- Dell EMC Networking OS9
+
+Planned compliance checks include:
+
+- NTP configuration
+- DNS servers
+- Syslog servers
+- SNMP configuration
+- SSH enabled
+- Telnet disabled
+- AAA configuration
+- Login banners
+- Management access restrictions
+- Interface descriptions
+- Spanning-tree settings
+- Required VLANs
+- Management VLAN configuration
+
+Example workflow:
+
+1. Read devices from `devices.yml`
+2. Load compliance requirements from `standards.yml`
+3. Prompt securely for device credentials
+4. Connect to devices using Netmiko
+5. Retrieve the running configuration
+6. Evaluate the configuration against defined standards
+7. Mark each check as PASS, FAIL, or WARNING
+8. Generate a consolidated compliance report
+
+Example report:
+
+```text
+Device            Check                 Status
+---------------------------------------------------
+LAB-NXOS-SW-01    SSH Enabled           PASS
+LAB-NXOS-SW-01    Telnet Disabled       PASS
+LAB-NXOS-SW-01    NTP Configured        PASS
+LAB-NXOS-SW-01    Syslog Configured     FAIL
+
+LAB-JUNIPER-01    SSH Enabled           PASS
+LAB-JUNIPER-01    NTP Configured        PASS
+LAB-JUNIPER-01    Interface Descriptions WARNING
+```
+
+Compliance standards are intended to be stored separately from the Python code, allowing requirements to be changed without modifying the compliance engine.
+
+Example `standards.yml`:
+
+```yaml
+standards:
+  ssh_required: true
+  telnet_allowed: false
+  ntp_required: true
+  dns_required: true
+  syslog_required: true
+  aaa_required: true
+  interface_descriptions_required: true
+```
+
+Future enhancements may include:
+
+- Vendor-specific compliance policies
+- CIS-aligned configuration checks
+- Password policy validation
+- SNMPv3 validation
+- AAA/TACACS+ validation
+- Management ACL validation
+- Configuration drift detection
+- Compliance scoring
+- CSV and JSON reporting
+- HTML compliance reports
+- NetBox integration
