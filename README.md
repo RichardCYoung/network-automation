@@ -371,3 +371,22 @@ Future enhancements may include:
 - CSV and JSON reporting
 - HTML compliance reports
 - NetBox integration
+
+
+## Lab Environment
+
+The automation workflows in this repository are developed and tested against a hands-on multi-vendor network lab.
+
+The lab combines virtual and physical network platforms to test device discovery, inventory collection, configuration management, VLAN auditing, and compliance workflows.
+
+### EVE-NG Multi-Vendor Lab
+
+![EVE-NG Multi-Vendor Lab](screenshots/EVE-01.png)
+
+The EVE-NG environment provides virtual network infrastructure for testing multiple network operating systems and automation workflows.
+
+### Lab Topology
+
+![Network Lab Topology](screenshots/EVE-02.png)
+
+The lab is used to validate automation against realistic network topologies before expanding scripts to additional platforms and use cases.
