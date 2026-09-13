@@ -1,0 +1,23 @@
+standards:
+
+  management_access:
+    ssh_required: true
+    telnet_allowed: false
+
+  time:
+    ntp_required: true
+
+  logging:
+    syslog_required: true
+
+  name_resolution:
+    dns_required: true
+
+  authentication:
+    aaa_required: true
+
+  interfaces:
+    descriptions_required: true
+
+  snmp:
+    snmpv3_preferred: true
