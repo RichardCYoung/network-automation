@@ -153,7 +153,82 @@ This repository contains lab-built and sanitized examples only.
 No customer, employer, or production credentials, configurations, certificates, API keys, or sensitive network information are published.
 
 
+## Configuration Backup
+
+The repository also includes an early-stage multi-vendor configuration backup workflow.
+
+The goal is to connect to devices defined in the existing YAML inventory and retrieve their active configuration using vendor-specific commands.
+
+Currently targeted platforms include:
+
+- Arista EOS
+- Cisco NX-OS
+- Juniper Junos
+- Dell EMC Networking OS9
+
+Example workflow:
+
+1. Read devices from `devices.yml`
+2. Prompt securely for credentials
+3. Connect to each device using Netmiko
+4. Run the appropriate configuration command for each vendor
+5. Save the configuration using the device hostname
+6. Record the date and time of the backup
+7. Report successful and failed backups
+
+Example backup structure:
+
+```text
+backups/
+├── E2-ARISTA-SW-01/
+│   └── 2026-09-13_running-config.txt
+├── E2-NXOS-SW-1/
+│   └── 2026-09-13_running-config.txt
+├── n4t-sw01/
+│   └── 2026-09-13_configuration.txt
+└── SW03/
+    └── 2026-09-13_running-config.txt
+
 For the commit message use:
 
 ```text
 Improve project documentation and usage examples
+
+## Configuration Backup
+
+The repository also includes an early-stage multi-vendor configuration backup workflow.
+
+The goal is to connect to devices defined in the existing YAML inventory and retrieve their active configuration using vendor-specific commands.
+
+Currently targeted platforms include:
+
+- Arista EOS
+- Cisco NX-OS
+- Juniper Junos
+- Dell EMC Networking OS9
+
+Example workflow:
+
+1. Read devices from `devices.yml`
+2. Prompt securely for credentials
+3. Connect to each device using Netmiko
+4. Run the appropriate configuration command for each vendor
+5. Save the configuration using the device hostname
+6. Record the date and time of the backup
+7. Report successful and failed backups
+
+Example backup structure:
+
+```text
+backups/
+├── E2-ARISTA-SW-01/
+│   └── 2026-09-13_running-config.txt
+├── E2-NXOS-SW-1/
+│   └── 2026-09-13_running-config.txt
+├── n4t-sw01/
+│   └── 2026-09-13_configuration.txt
+└── SW03/
+    └── 2026-09-13_running-config.txt
+
+
+
