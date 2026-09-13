@@ -1,36 +1,40 @@
 # Network Automation
 
-Practical network automation projects for enterprise networking, security, cloud, and infrastructure management.
+A practical multi-vendor network automation project for discovering, collecting, and reporting network device inventory.
 
-This repository contains lab-built and sanitized examples covering Cisco, Juniper, Palo Alto, Meraki, Azure, NetBox, Ansible, and Python automation.
+This project demonstrates the use of Python, Netmiko, YAML, and Git to automate common network engineering tasks across multiple network operating systems.
 
-## Areas Covered
+## Current Capabilities
 
-- Network device inventory and discovery
-- Configuration backup
-- Interface and VLAN auditing
-- Firewall and security policy auditing
-- Cloud network validation
-- Meraki API automation
-- Palo Alto / Panorama automation
-- NetBox integration
-- Ansible network automation
-- Network health and validation testing
+The inventory collector connects to lab network devices over SSH and automatically collects:
 
-## Lab Environment
+- Hostname
+- Vendor
+- Hardware model
+- Serial number
+- Software version
+- Architecture/platform information
+- System uptime
+- Management IP address
 
-Projects are developed and tested using lab environments including:
+The collected information is displayed as a consolidated network inventory report.
 
-- EVE-NG
-- Cisco IOS / IOS-XE
-- Arista EOS
+## Supported Platforms
+
+Currently tested against:
+
+- Arista EOS / vEOS
+- Cisco Nexus / NX-OS
 - Juniper Junos
-- NetBox
-- MicroK8s
-- Microsoft Azure
+- Dell EMC Networking OS9
 
-## Security
+The lab currently includes physical and virtual network devices representing multiple vendors and operating systems.
 
-All examples in this repository are sanitized and intended for lab and demonstration purposes.
+## Project Structure
 
-No customer, employer, or production configurations, credentials, API keys, certificates, or proprietary information are included.
+```text
+network-automation/
+├── live_inventory.py
+├── devices.yml
+├── requirements.txt
+└── README.md
