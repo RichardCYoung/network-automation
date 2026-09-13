@@ -230,5 +230,61 @@ backups/
 └── SW03/
     └── 2026-09-13_running-config.txt
 
+## Interface and VLAN Audit
 
+The repository also includes an early-stage interface and VLAN auditing workflow.
+
+The goal is to collect interface and VLAN information from multiple network vendors and normalize the results into a common report.
+
+Currently targeted platforms include:
+
+- Arista EOS
+- Cisco NX-OS
+- Juniper Junos
+- Dell EMC Networking OS9
+
+Planned audit data includes:
+
+- Interface name
+- Administrative status
+- Operational status
+- Interface description
+- Access or trunk mode
+- Assigned VLAN
+- Native VLAN
+- Allowed VLANs
+- Speed
+- Duplex
+- Error counters
+- Management IP association where applicable
+
+Example workflow:
+
+1. Read devices from `devices.yml`
+2. Prompt securely for credentials
+3. Connect to each device using Netmiko
+4. Run vendor-specific interface and VLAN commands
+5. Parse the output
+6. Normalize the data into a common format
+7. Export the results to CSV or JSON
+8. Highlight inconsistent or unexpected VLAN assignments
+
+Example vendor commands:
+
+| Platform | Interface Command | VLAN Command |
+| --- | --- | --- |
+| Arista EOS | `show interfaces status` | `show vlan` |
+| Cisco NX-OS | `show interface status` | `show vlan brief` |
+| Juniper Junos | `show interfaces terse` | `show vlans` |
+| Dell OS9 | `show interfaces status` | `show vlan` |
+
+Example normalized output:
+
+```text
+Hostname        Interface   Status   Mode    VLAN   Description
+----------------------------------------------------------------
+LAB-NXOS-SW-1   Eth1/1      up       trunk   10     ESXi-Uplink
+LAB-NXOS-SW-1   Eth1/2      up       access  20     Server-01
+LAB-JUNIPER-01  ge-0/0/1    up       access  10     Management
+LAB-DELL-01     Te1/49      up       trunk   10     Core-Uplink
 
